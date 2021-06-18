@@ -2,16 +2,12 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dto.EmployeeDto;
 import com.example.demo.dto.search.EmployeeSeachDto;
-import com.example.demo.entity.EmployeeEntity;
+import com.example.demo.entity.Employee;
 import com.example.demo.excel.EmployeeExcelExporter;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.service.EmployeeService;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-
-import org.springframework.web.bind.annotation.PathVariable;
 
 
 import javax.persistence.EntityManager;
@@ -30,8 +26,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     EntityManager entityManager;
 
     @Override
-    public EmployeeEntity insertData(EmployeeDto dto) {
-        EmployeeEntity entity = new EmployeeEntity();
+    public Employee insertData(EmployeeDto dto) {
+        Employee entity = new Employee();
         entity.setCode(dto.getCode());
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
@@ -44,8 +40,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeDto> getAll() {
         List<EmployeeDto> dtoList = new ArrayList<>();
-        List<EmployeeEntity> all = repository.findAll();
-        for (EmployeeEntity entity : all) {
+        List<Employee> all = repository.findAll();
+        for (Employee entity : all) {
             dtoList.add(new EmployeeDto(entity));
         }
         return dtoList;
@@ -53,16 +49,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<EmployeeDto> search(EmployeeSeachDto seachDto) {
-        String sql = "select a from EmployeeEntity a";
+        String sql = "select a from Employee a";
         sql += this.setSql(seachDto);
         Query query = entityManager.createQuery(sql);
         query = this.setParam(query, seachDto);
 
-        List<EmployeeEntity> list = query.getResultList();
+        List<Employee> list = query.getResultList();
         return this.toListDto(list);
     }
 
-    public List<EmployeeDto> toListDto(List<EmployeeEntity> entityList) {
+    public List<EmployeeDto> toListDto(List<Employee> entityList) {
         return entityList.stream()
                 .map(employee -> {
                     EmployeeDto dto = new EmployeeDto();
@@ -98,7 +94,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Boolean update(EmployeeDto dto) {
         if (dto != null) {
-            EmployeeEntity employee = repository.findByCode(dto.getCode());
+            Employee employee = repository.findByCode(dto.getCode());
             employee.setName(dto.getName());
             employee.setEmail(dto.getEmail());
             employee.setPhone(dto.getPhone());
@@ -126,7 +122,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         String headerValue = "attachment; filename=Employee_info.xlsx";
 
         response.setHeader(headerKey, headerValue);
-        List<EmployeeEntity> list = repository.findAll();
+        List<Employee> list = repository.findAll();
         EmployeeExcelExporter exp = new EmployeeExcelExporter(list);
         exp.export(response);
     }

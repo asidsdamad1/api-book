@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-import com.example.demo.entity.EmployeeEntity;
+import com.example.demo.entity.Employee;
 
 public class EmployeeDto {
     private Integer id;
@@ -10,7 +10,7 @@ public class EmployeeDto {
     private String phone;
     private int age;
 
-    public EmployeeDto(EmployeeEntity entity) {
+    public EmployeeDto(Employee entity) {
         if (entity != null) {
             this.setId(entity.getId());
             this.setCode(entity.getCode());

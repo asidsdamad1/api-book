@@ -1,6 +1,6 @@
 package com.example.demo.excel;
 
-import com.example.demo.entity.EmployeeEntity;
+import com.example.demo.entity.Employee;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -18,9 +18,9 @@ import static org.apache.poi.ss.util.CellUtil.createCell;
 public class EmployeeExcelExporter {
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
-    private List<EmployeeEntity> list;
+    private List<Employee> list;
 
-    public EmployeeExcelExporter(List<EmployeeEntity> list) {
+    public EmployeeExcelExporter(List<Employee> list) {
         this.list = list;
         workbook = new XSSFWorkbook();
     }
@@ -67,7 +67,7 @@ public class EmployeeExcelExporter {
         font.setFontHeight(12);
         style.setFont(font);
 
-        for (EmployeeEntity employee : list) {
+        for (Employee employee : list) {
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
 

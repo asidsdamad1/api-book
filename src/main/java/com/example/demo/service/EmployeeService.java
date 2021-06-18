@@ -2,8 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.EmployeeDto;
 import com.example.demo.dto.search.EmployeeSeachDto;
-import com.example.demo.entity.EmployeeEntity;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.example.demo.entity.Employee;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +11,7 @@ import java.util.List;
 
 @Service
 public interface EmployeeService {
-    public EmployeeEntity insertData(EmployeeDto dto);
+    public Employee insertData(EmployeeDto dto);
 
     public List<EmployeeDto> getAll();
 
