@@ -1,25 +1,32 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.EmployeeDto;
-import com.example.demo.dto.search.EmployeeSeachDto;
-import com.example.demo.entity.Employee;
+import com.example.demo.functiondto.EmployeeSeachDto;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public interface EmployeeService {
-    public Employee insertData(EmployeeDto dto);
+    public EmployeeDto saveOrUpdate(EmployeeDto dto, UUID id);
 
     public List<EmployeeDto> getAll();
 
-    List<EmployeeDto> search(EmployeeSeachDto dto);
+    Page<EmployeeDto> searchByPage(EmployeeSeachDto dto);
 
-    public Boolean update(EmployeeDto dto);
+    public Boolean delete(UUID id);
 
-    public Boolean delete(String code);
+    public  EmployeeDto getByCode(String code);
+
+    public  EmployeeDto getById(UUID id);
+
+    public  Boolean checkDuplicateCode(String code, UUID id);
 
     public void exportToExcel(HttpServletResponse response) throws IOException;
+
+
 }

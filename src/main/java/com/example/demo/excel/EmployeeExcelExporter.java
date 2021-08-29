@@ -1,6 +1,6 @@
 package com.example.demo.excel;
 
-import com.example.demo.entity.Employee;
+import com.example.demo.domain.Employee;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;

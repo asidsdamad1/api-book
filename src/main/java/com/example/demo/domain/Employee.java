@@ -1,11 +1,26 @@
-package com.example.demo.dto.search;
+package com.example.demo.domain;
 
-public class EmployeeSeachDto {
+import org.hibernate.annotations.Type;
+
+import javax.persistence.*;
+import java.util.UUID;
+
+@Entity
+@Table(name = "employee")
+public class Employee extends BaseObject{
+
+
+    @Column(name = "code")
     private String code;
+    @Column(name = "name")
     private String name;
-    private String phone;
+    @Column(name = "email")
     private String email;
+    @Column(name = "phone")
+    private String phone;
+    @Column(name = "age")
     private int age;
+
 
     public String getCode() {
         return code;
@@ -23,20 +38,20 @@ public class EmployeeSeachDto {
         this.name = name;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public int getAge() {

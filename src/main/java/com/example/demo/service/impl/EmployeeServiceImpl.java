@@ -1,22 +1,30 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.EmployeeDto;
-import com.example.demo.dto.search.EmployeeSeachDto;
-import com.example.demo.entity.Employee;
+import com.example.demo.functiondto.EmployeeSeachDto;
+import com.example.demo.domain.Employee;
 import com.example.demo.excel.EmployeeExcelExporter;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.service.EmployeeService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.util.NumberUtils;
+import org.springframework.util.StringUtils;
 
 
 import javax.persistence.EntityManager;
+
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.data.domain.Pageable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -25,16 +33,29 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     EntityManager entityManager;
 
+
     @Override
-    public Employee insertData(EmployeeDto dto) {
-        Employee entity = new Employee();
-        entity.setCode(dto.getCode());
-        entity.setName(dto.getName());
-        entity.setEmail(dto.getEmail());
-        entity.setPhone(dto.getPhone());
-        entity.setAge(dto.getAge());
-        repository.save(entity);
-        return entity;
+    public EmployeeDto saveOrUpdate(EmployeeDto dto, UUID id) {
+        if(dto != null) {
+            Employee entity =null;
+            if(id != null) {
+                entity = repository.getById(id);
+            }
+            if(entity == null) {
+                entity = new Employee();
+            }
+            entity.setCode(dto.getCode());
+            entity.setEmail(dto.getEmail());
+            entity.setName(dto.getName());
+            entity.setAge(dto.getAge());
+            entity.setPhone(dto.getPhone());
+
+            repository.save(entity);
+            if(entity != null) {
+                return new EmployeeDto(entity);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -48,71 +69,79 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDto> search(EmployeeSeachDto seachDto) {
-        String sql = "select a from Employee a";
-        sql += this.setSql(seachDto);
-        Query query = entityManager.createQuery(sql);
-        query = this.setParam(query, seachDto);
-
-        List<Employee> list = query.getResultList();
-        return this.toListDto(list);
-    }
-
-    public List<EmployeeDto> toListDto(List<Employee> entityList) {
-        return entityList.stream()
-                .map(employee -> {
-                    EmployeeDto dto = new EmployeeDto();
-                    dto.setId(employee.getId());
-                    dto.setCode(employee.getCode());
-                    dto.setName(employee.getName());
-                    dto.setEmail(employee.getEmail());
-                    dto.setPhone(employee.getPhone());
-                    dto.setAge(employee.getId());
-                    return dto;
-                }).collect(Collectors.toList());
-    }
-
-    private Query setParam(Query query, EmployeeSeachDto dto) {
-        if (this.isNotEmpty(dto.getCode())) {
-            query = query.setParameter("code", dto.getCode());
+    public Page<EmployeeDto> searchByPage(EmployeeSeachDto searchDto) {
+        if(searchDto == null){
+            return  null;
         }
-        return query;
-    }
-
-    private String setSql(EmployeeSeachDto dto) {
-        String where = " where 1=1 ";
-        if (this.isNotEmpty(dto.getCode())) {
-            where += " and a.code = :code ";
+        int pageIndex = searchDto.getPageIndex();
+        int pageSize = searchDto.getPageSize();
+        if(pageIndex > 0) {
+            pageIndex--;
+        } else {
+            pageIndex = 0;
         }
-        return where;
-    }
+        String whereClause = "";
+        String orderBy = "ORDER BY entity.code";
+        String sqlCount = "select count(entity.id) from Employee as entity where (1=1)";
+        String sql= "select new com.example.demo.dto.EmployeeDto(entity) from Employee as entity where (1=1)";
+        if(searchDto.getText() != null && StringUtils.hasText(searchDto.getText()) ) {
+            whereClause = "AND (entity.name LIKE :text OR entity.code LIKE :text)";
+        }
+        sql += whereClause + orderBy;
+        sqlCount += whereClause;
+        Query q = entityManager.createQuery(sql, EmployeeDto.class);
+        Query qCount = entityManager.createQuery(sqlCount);
 
-    private boolean isNotEmpty(String s) {
-        return s.length() > 0 && s != null;
+        if(searchDto.getText() != null && StringUtils.hasText(searchDto.getText()) ) {
+            q.setParameter("text", '%' + searchDto.getText().trim() + '%');
+            qCount.setParameter("text", '%' + searchDto.getText().trim() + '%');
+        }
+
+        int startPosition = pageIndex * pageSize;
+        q.setFirstResult(startPosition);
+        q.setMaxResults(pageSize);
+        List<EmployeeDto> entities = q.getResultList();
+        long count= (long) qCount.getSingleResult();
+
+        Pageable pageable = PageRequest.of(pageIndex, pageSize);
+        Page<EmployeeDto> result = new PageImpl<EmployeeDto>(entities, pageable, count);
+
+        return  result;
     }
 
     @Override
-    public Boolean update(EmployeeDto dto) {
-        if (dto != null) {
-            Employee employee = repository.findByCode(dto.getCode());
-            employee.setName(dto.getName());
-            employee.setEmail(dto.getEmail());
-            employee.setPhone(dto.getPhone());
-            employee.setAge(dto.getAge());
-            repository.save(employee);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public Boolean delete(String code) {
-        if (code != null) {
-            int id = repository.findByCode(code).getId();
+    public Boolean delete(UUID id) {
+        if (id != null) {
             repository.deleteById(id);
             return true;
         }
         return false;
+    }
+
+    @Override
+    public EmployeeDto getByCode(String code) {
+        if(code != null) {
+            return repository.getByCode(code);
+        }
+        return null;
+    }
+
+    @Override
+    public EmployeeDto getById(UUID id) {
+        Employee entity = repository.getById(id);
+        if(entity != null) {
+            return new EmployeeDto(entity);
+        }
+        return null;
+    }
+
+    @Override
+    public Boolean checkDuplicateCode(String code, UUID id) {
+        if(code != null && StringUtils.hasText(code)) {
+            Long count = repository.checkCode(code, id);
+            return count != 0l;
+        }
+        return null;
     }
 
     @Override
