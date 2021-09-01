@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import java.util.UUID;
 
 @Service
@@ -120,14 +121,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDto getByCode(String code) {
+        Employee entity = repository.getByCode(code);
         if(code != null) {
-            return repository.getByCode(code);
+            return new EmployeeDto(entity);
         }
         return null;
     }
 
     @Override
-    public EmployeeDto getById(UUID id) {
+    public EmployeeDto getEmployeeById(UUID id) {
         Employee entity = repository.getById(id);
         if(entity != null) {
             return new EmployeeDto(entity);

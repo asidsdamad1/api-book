@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+
 @Service
 public interface EmployeeService {
     public EmployeeDto saveOrUpdate(EmployeeDto dto, UUID id);
@@ -22,7 +23,7 @@ public interface EmployeeService {
 
     public  EmployeeDto getByCode(String code);
 
-    public  EmployeeDto getById(UUID id);
+    public  EmployeeDto getEmployeeById(UUID id);
 
     public  Boolean checkDuplicateCode(String code, UUID id);
 

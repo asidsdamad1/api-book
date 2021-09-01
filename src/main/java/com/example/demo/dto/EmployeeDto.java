@@ -2,8 +2,10 @@ package com.example.demo.dto;
 
 import com.example.demo.domain.Employee;
 
-public class EmployeeDto {
+import java.util.UUID;
 
+public class EmployeeDto {
+    private UUID id;
     private String code;
     private String name;
     private String email;
@@ -12,6 +14,7 @@ public class EmployeeDto {
 
     public EmployeeDto(Employee entity) {
         if (entity != null) {
+            this.setId(entity.getId());
             this.setCode(entity.getCode());
             this.setName(entity.getName());
             this.setEmail(entity.getEmail());
@@ -25,6 +28,13 @@ public class EmployeeDto {
     }
 
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getCode() {
         return code;

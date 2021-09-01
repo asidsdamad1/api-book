@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/employees")
 public class RestEmployeeController {
@@ -27,7 +28,7 @@ public class RestEmployeeController {
     EmployeeRepository repository;
 
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<EmployeeDto> save(@RequestBody EmployeeDto dto) {
         EmployeeDto value = service.saveOrUpdate(dto, null);
         return ResponseEntity.ok().body(value);
@@ -68,16 +69,21 @@ public class RestEmployeeController {
             }
          */
 
-    @RequestMapping(path = "/getByCode/{code}", method = RequestMethod.GET)
-    public ResponseEntity<EmployeeDto> getEmployeeCode(@PathVariable String code) {
-        EmployeeDto result = repository.getByCode(code);
+    @RequestMapping(path = "/getByCode/{code}", method = RequestMethod.POST)
+    public ResponseEntity<EmployeeDto> getEmployeeByCode(@PathVariable String code) {
+        EmployeeDto result = service.getByCode(code);
+        return new ResponseEntity<EmployeeDto>(result, (result != null) ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    }
+    @RequestMapping(path = "/{id}", method = RequestMethod.POST)
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable UUID id) {
+        EmployeeDto result = service.getEmployeeById(id);
         return new ResponseEntity<EmployeeDto>(result, (result != null) ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
     /*
-            http://localhost:8089/api/employees/getByCode/000001
+            http://localhost:8089/api/employees/000001
     */
 
-    @RequestMapping(path = "/update/{id}", method = RequestMethod.PUT)
+    @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<EmployeeDto> update(@RequestBody EmployeeDto dto, @PathVariable("id") UUID id) {
         EmployeeDto result = service.saveOrUpdate(dto, id);
         return new ResponseEntity<EmployeeDto>(result, (result != null) ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
@@ -93,7 +99,7 @@ public class RestEmployeeController {
             }
      */
 
-    @RequestMapping(path = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Boolean> delete(@PathVariable("id") UUID id) {
         return ResponseEntity.ok().body(service.delete(id));
     }
