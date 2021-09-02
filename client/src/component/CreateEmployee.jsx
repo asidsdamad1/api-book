@@ -11,15 +11,15 @@ toast.configure({
     //etc you get the idea
 });
 
-
-function FormError(props) {
-    /* nếu isHidden = true, return null ngay từ đầu */
-    if (props.state.name.length === 0) {
-        return null;
-    }
-
-    return (<div style={{marginBottom: "10px"}}>{props.errorMessage}</div>)
-}
+//
+// function FormError(props) {
+//     /* nếu isHidden = true, return null ngay từ đầu */
+//     if (props.state.name.length === 0) {
+//         return null;
+//     }
+//
+//     return (<div style={{marginBottom: "10px"}}>{props.errorMessage}</div>)
+// }
 
 class CreateEmployee extends Component {
     constructor(props) {
@@ -88,7 +88,7 @@ class CreateEmployee extends Component {
                 toast.error('Mã đã được sử dụng!')
             } else {
                 if (this.state.id === ' ') {
-                    if(this.state.name.length === 0) alert("a");
+
                     EmployeeService.saveEmployee(employee).then((res) => {
                         this.props.history.push("/employees")
                         toast.success('Thêm thành công!')
