@@ -1,0 +1,17 @@
+{
+  "toast": {
+    "error": "Có lỗi xảy ra, vui lòng thử lại!",
+    "delete_success": "Đã xóa thành công!",
+    "please_select": "Hãy chọn ít nhất 1 mục để xóa!",
+    "duplicate_code": "Mã đã được sử dụng!",
+    "update_success": "Cập nhật thành công!",
+    "add_success": "Thêm mới thành công!",
+    "user_exist": "Tên đăng nhập đã tồn tại!",
+    "sent_address_check_success": "Đã gửi cho địa phương rà soát!",
+    "change_password_success": "Đã thay đổi mật khẩu!",
+    "change_password_failure": "Có lỗi khi thay đổi mật khẩu!",
+    "sent_address_check_duplicate": "Bệnh nhân đã trong danh sách cần rà soát!",
+    "sent_treatment_duplicate": "Bệnh nhân đã có trong danh sách điều trị!",
+    "sent_treatment_success": "Đã chuyển điều trị cho bệnh nhân!"
+  }
+}
