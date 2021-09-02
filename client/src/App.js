@@ -1,12 +1,12 @@
-import logo from './logo.svg';
+
 import './App.css';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import ListEmployee from "./component/ListEmployee";
 import Footer from "./component/Footer";
 import Header from "./component/Header";
 import CreateEmployee from "./component/CreateEmployee";
-import UpdateEmployee from "./component/UpdateEmployee";
 import ViewEmployeeComponent from "./component/ViewEmployee";
+import  'react-app-polyfill/stable'
 
 function App() {
     return (
