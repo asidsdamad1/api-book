@@ -3,6 +3,7 @@ import EmployeeService from "../services/EmployeeService";
 import {toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {useParams} from "react-router-dom";
+
 toast.configure({
     autoClose: 2000,
     draggable: false,
@@ -10,20 +11,29 @@ toast.configure({
     //etc you get the idea
 });
 
+
+function FormError(props) {
+    /* nếu isHidden = true, return null ngay từ đầu */
+    if (props.state.name.length === 0) {
+        return null;
+    }
+
+    return (<div style={{marginBottom: "10px"}}>{props.errorMessage}</div>)
+}
+
 class CreateEmployee extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
+
             id: this.props.match.params.id,
             name: '',
             code: '',
             email: '',
             age: '',
-            phone: '',
-            value: '',
-            isInputValid: true,
-            errorMessage: ''
+            phone: ''
+
 
         }
         this.changeCodeHandler = this.changeCodeHandler.bind(this);
@@ -32,36 +42,13 @@ class CreateEmployee extends Component {
         this.changePhoneHandler = this.changePhoneHandler.bind(this);
         this.changeAgeHandler = this.changeAgeHandler.bind(this);
         this.saveOrUpdate = this.saveOrUpdate.bind(this);
-        const validateInput = (checkingText) => {
-            /* reg exp để kiểm tra xem chuỗi có chỉ bao gồm 10 - 11 chữ số hay không */
 
-            const regexp = /^\d{10,11}$/;
-            const checkingResult = regexp.exec(checkingText);
-            if (checkingResult !== null) {
-                return { isInputValid: true,
-                    errorMessage: ''};
-            } else {
-                return { isInputValid: false,
-                    errorMessage: 'Số điện thoại phải có 10 - 11 chữ số.'};
-            }
-        }
     }
-    handleInput = event => {
-        const { value } = event.target;
-        this.setState({value});
-    }
-    /* Tạo method handleInputValidation để kiểm tra nội dung input, rồi cập nhật trạng thái vào state*/
 
-    handleInputValidation = event => {
-        const { isInputValid, errorMessage } = validateInput(this.state.value);
-        this.setState({
-            isInputValid: isInputValid,
-            errorMessage: errorMessage
-        })
-    }
+
     componentDidMount() {
-        if(this.state.id === ' ') {
-            return
+        if (this.state.id === '\\s+') {
+
         } else {
             EmployeeService.getEmployeeById(this.state.id).then((res) => {
                 let employee = res.data
@@ -77,6 +64,7 @@ class CreateEmployee extends Component {
         }
 
     }
+
 
     saveOrUpdate = (e) => {
         e.preventDefault();
@@ -96,15 +84,15 @@ class CreateEmployee extends Component {
         console.log('employee => ' + JSON.stringify(employee));
 
         EmployeeService.checkCode(this.state.id, employee.code).then((res) => {
-            if(res.data) {
+            if (res.data) {
                 toast.error('Mã đã được sử dụng!')
             } else {
-                if ( this.state.id === ' ') {
-                        EmployeeService.saveEmployee(employee).then((res) => {
-                            this.props.history.push("/employees")
-                            toast.success('Thêm thành công!')
-                        })
-
+                if (this.state.id === ' ') {
+                    if(this.state.name.length === 0) alert("a");
+                    EmployeeService.saveEmployee(employee).then((res) => {
+                        this.props.history.push("/employees")
+                        toast.success('Thêm thành công!')
+                    })
                 } else {
                     EmployeeService.updateEmployee(employee, this.state.id).then((res) => {
                         this.props.history.push("/employees")
@@ -115,8 +103,10 @@ class CreateEmployee extends Component {
 
         })
 
+
     }
     changeNameHandler = (event) => {
+        if (event.target === null) alert("a")
         this.setState({name: event.target.value});
     }
     changeCodeHandler = (event) => {
@@ -145,34 +135,43 @@ class CreateEmployee extends Component {
                             <h3 className="text-center">Add Employee</h3>
                             <div className="card-body">
                                 <form action="">
-                                    <div className="form-group" >
-                                        <label>Name: </label>
+                                    <div className="form-group">
+                                        <label>Name <span className={"text-danger"}>*</span> </label>
                                         <input placeholder={"Name"} name={"name"} className={"form-control"}
-                                               value={this.state.name} onChange={this.changeNameHandler} required={true}/>
+                                               value={this.state.name} onChange={this.changeNameHandler}
+                                               required={true}/>
+
                                     </div>
                                     <div className="form-group">
-                                        <label>Code: </label>
-                                        <input placeholder={"Code"} name={"code"} className={"form-control"}
-                                               value={this.state.code} onChange={this.changeCodeHandler} required={true}/>
+                                        <label>Code <span className={"text-danger"}>*</span> </label>
+                                        <input type={"email"} placeholder={"Code"} name={"code"}
+                                               className={"form-control"}
+                                               value={this.state.code} onChange={this.changeCodeHandler}/>
+
                                     </div>
                                     <div className="form-group">
-                                        <label>Email: </label>
-                                        <input type={"email"} placeholder={"Email"} name={"email"} className={"form-control"}
-                                               value={this.state.email} onChange={this.changeEmailHandler} required={true}/>
+                                        <label>Email <span className={"text-danger"}>*</span> </label>
+                                        <input type={"email"} placeholder={"Email"} name={"email"}
+                                               className={"form-control"}
+                                               value={this.state.email} onChange={this.changeEmailHandler}/>
                                     </div>
                                     <div className="form-group">
-                                        <label>Age: </label>
+                                        <label>Age <span className={"text-danger"}>*</span> </label>
                                         <input placeholder={"Age"} name={"age"} className={"form-control"}
                                                value={this.state.age} onChange={this.changeAgeHandler}/>
                                     </div>
                                     <div className="form-group">
-                                        <label>Phone: </label>
+                                        <label>Phone <span className={"text-danger"}>*</span> </label>
                                         <input placeholder={"Phone"} name={"phone"} className={"form-control"}
                                                value={this.state.phone} onChange={this.changePhoneHandler}/>
                                     </div>
 
-                                    <button className={"btn btn-success"} onClick={this.saveOrUpdate} style={{marginLeft: "10px"}}>Save</button>
-                                    <button className="btn btn-danger" onClick={this.cancel.bind(this)} style={{marginLeft: "10px"}}>Cancel</button>
+                                    <button className={"btn btn-success"} onClick={this.saveOrUpdate}
+                                            style={{marginLeft: "10px"}}>Save
+                                    </button>
+                                    <button className="btn btn-danger" onClick={this.cancel.bind(this)}
+                                            style={{marginLeft: "10px"}}>Cancel
+                                    </button>
                                 </form>
                             </div>
                         </div>
