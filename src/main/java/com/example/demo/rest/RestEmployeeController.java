@@ -19,6 +19,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/employees")
+@CrossOrigin
 public class RestEmployeeController {
 
     @Autowired
