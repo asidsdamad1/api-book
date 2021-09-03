@@ -61,7 +61,7 @@ class ListEmployee extends Component {
                         <tbody>
                         {
                             this.state.employees.map(
-                                employee =>
+                                (employee) =>
                                     <tr key = {employee.id}>
                                         <td>{employee.code}</td>
                                         <td>{employee.name}</td>
