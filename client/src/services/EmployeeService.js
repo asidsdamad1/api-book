@@ -5,32 +5,32 @@ const BASE_URL = "http://localhost:8089/api/employees"
 
 class EmployeeService {
     getEmployee() {
-        return axios.get(BASE_URL)
+        return axios.get('')
     }
 
 
     saveEmployee(employee) {
-        return axios.post(BASE_URL, employee)
+        return axios.post('', employee)
     }
 
     updateEmployee(employee, employeeId) {
-        return axios.put(BASE_URL + '/' + employeeId, employee)
+        return axios.put('/' + employeeId, employee)
     }
 
     getEmployeeById(employeeId) {
-        return axios.post(BASE_URL + '/' + employeeId)
+        return axios.post('/' + employeeId)
     }
     getEmployeeByCode(code) {
-        return axios.post(BASE_URL + '/getByCode/' + code)
+        return axios.post('/getByCode/' + code)
     }
 
     deleteEmployee(employeeId) {
-        return axios.delete(BASE_URL + '/' + employeeId)
+        return axios.delete('/' + employeeId)
     }
 
     checkCode(id, code) {
         const config = {params: {id: id, code: code}};
-        var url =BASE_URL + "/checkCode";
+        var url = "/checkCode";
         return axios.get(url, config);
     }
 }
