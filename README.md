@@ -1,4 +1,4 @@
 # manage-employee
 
-deploy (đang fix hiện chưa lên được giao diện):
-
+deploy (hiện đang fix chưa lên được giao diện):
+https://manage-listemployee.herokuapp.com/
