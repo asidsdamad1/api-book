@@ -9,6 +9,9 @@ import com.example.deploy.repository.UserRepository;
 import com.example.deploy.service.UserService;
 import com.example.deploy.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -69,6 +72,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto deleteById(Long userId) {
+
+        return null;
+    }
+
+    @Override
+    public UserDto getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        String userName = null;
+        if (principal instanceof UserDetails) {
+            UserDetails userDetail = (UserDetails)principal;
+            userName = userDetail.getUsername();
+        } else {
+            userName = principal.toString();
+        }
+
+        if (userName != null) {
+            User entity = this.userRepository.findByUsernameAndPerson(userName);
+            if (entity != null) {
+                return new UserDto(entity);
+            }
+        }
 
         return null;
     }

@@ -143,7 +143,9 @@ public class User implements UserDetails{
 
     }
 
+    public User(String username, String password, Collection<SimpleGrantedAuthority> authorities) {
 
+    }
 
     public User(User user) {
 

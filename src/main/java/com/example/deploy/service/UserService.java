@@ -5,4 +5,5 @@ import com.example.deploy.dto.UserDto;
 public interface UserService {
     UserDto save(UserDto userDto);
     UserDto deleteById(Long userId);
+    UserDto getCurrentUser();
 }

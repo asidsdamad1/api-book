@@ -9,15 +9,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/user")
 public class RestUserController {
 
     @Autowired
     UserService userService;
 
-    @RequestMapping(value = "/api/users", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     public UserDto saveUser(@RequestBody UserDto dto) {
         return this.userService.save(dto);
     }
 
-
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public UserDto getCurrentUser() {
+        return this.userService.getCurrentUser();
+    }
 }

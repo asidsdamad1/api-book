@@ -27,6 +27,7 @@ public class UserDto {
     private boolean hasPhoto;
     private Set<RoleDto> roles = new HashSet();
 
+
     public UserDto(User entity) {
         if (entity != null) {
             this.id = entity.getId();
