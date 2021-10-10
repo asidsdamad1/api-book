@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import EmployeeService from "../services/EmployeeService";
+import EmployeeService from "../../services/EmployeeService";
 import {toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import {useParams} from "react-router-dom";
 
 toast.configure({
     autoClose: 2000,
@@ -87,7 +86,7 @@ class CreateEmployee extends Component {
             if (res.data) {
                 toast.error('Mã đã được sử dụng!')
             } else {
-                if (this.state.id === ' ') {
+                if (this.state.id === '') {
 
                     EmployeeService.saveEmployee(employee).then((res) => {
                         this.props.history.push("/employees")

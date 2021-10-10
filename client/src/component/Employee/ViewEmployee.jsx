@@ -1,15 +1,15 @@
 import React, { Component } from 'react'
-import EmployeeService from '../services/EmployeeService'
+import EmployeeService from '../../services/EmployeeService'
 
 class ViewEmployeeComponent extends Component {
-    constructor(props) {
-        super(props)
+        constructor(props) {
+            super(props)
 
-        this.state = {
-            id: this.props.match.params.id,
-            employee: {}
+            this.state = {
+                id: this.props.match.params.id,
+                employee: {}
+            }
         }
-    }
 
     componentDidMount(){
         EmployeeService.getEmployeeById(this.state.id).then( res => {

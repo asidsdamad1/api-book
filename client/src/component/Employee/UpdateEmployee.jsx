@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import EmployeeService from "../services/EmployeeService";
+import EmployeeService from "../../services/EmployeeService";
 
 class CreateEmployee extends Component {
     constructor(props) {
@@ -37,7 +37,7 @@ class CreateEmployee extends Component {
         });
     }
     changeNameHandler = (event) => {
-        this.setState({phonee: event.target.value});
+        this.setState({phone: event.target.value});
     }
     changeCodeHandel = (event) => {
         this.setState({code: event.target.value});

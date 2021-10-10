@@ -1,5 +1,7 @@
+
 import React, {Component} from 'react';
-import EmployeeService from "../services/EmployeeService";
+import EmployeeService from "../../services/EmployeeService";
+
 
 class ListEmployee extends Component {
 
@@ -12,13 +14,13 @@ class ListEmployee extends Component {
         this.addEmployee = this.addEmployee.bind(this);
         this.editEmployee = this.editEmployee.bind(this);
         this.deleteEmployee = this.deleteEmployee.bind(this);
-
     }
 
 
     addEmployee(){
         this.props.history.push('/add-employee/ ');
     }
+
 
     editEmployee(id){
         this.props.history.push(`/add-employee/${id}`);
@@ -41,9 +43,16 @@ class ListEmployee extends Component {
         return (
             <div>
                 <h2 className="text-center">Employee List</h2>
+                <nav className="navbar navbar-light bg-light" style={{alignItems: "center", justifyContent: "center"}}>
+                    <form className="form-inline" style={{width: "50%"}}>
+                        <input className="form-control mr-sm-2 ml-10 " style={{width: "85%"}} type="search" placeholder="Search" aria-label="Search"/>
+                            <button style={{float:"right"}} className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </nav>
                 <div className = "">
                     <button className="btn btn-primary" onClick={this.addEmployee}> Add Employee</button>
                 </div>
+
                 <br/>
                 <div className="row">
                     <table className="table table-striped table-bordered">
@@ -77,11 +86,13 @@ class ListEmployee extends Component {
                             )
                         }
                         </tbody>
+
+
                     </table>
 
                 </div>
             </div>
-        );
+        );  
     }
 }
 

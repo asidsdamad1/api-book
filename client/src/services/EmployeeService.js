@@ -7,12 +7,7 @@ class EmployeeService {
         return axios.get(BASE_URL);
     }
 
-
-    saveEmployee(employee) {
-        return axios.post(BASE_URL, employee)
-    }
-
-    updateEmployee(employee, employeeId) {
+    saveOrUpdateEmployee(employee, employeeId) {
         return axios.put(BASE_URL + "/" + employeeId, employee)
     }
 
