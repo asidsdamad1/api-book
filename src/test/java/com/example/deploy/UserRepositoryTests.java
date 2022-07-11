@@ -4,6 +4,7 @@ import com.example.deploy.domain.Role;
 import com.example.deploy.domain.User;
 import com.example.deploy.repository.RoleRepository;
 import com.example.deploy.repository.UserRepository;
+import com.example.deploy.utils.SecurityUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -30,9 +31,10 @@ public class UserRepositoryTests {
     public void testCreateUser() {
         User user = new User();
         user.setEmail("asidsdamad1@gmail.com");
-        user.setPassword("123456");
+        user.setPassword(SecurityUtils.getHashPassword("123456"));
         user.setUsername("user1");
         user.setActive(true);
+
 
         User savedUser = userRepository.save(user);
 

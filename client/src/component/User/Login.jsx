@@ -7,6 +7,7 @@ import {
 import {Link} from "react-router-dom";
 import avatar from '../../avatar.png';
 import AuthenticationService from "../../services/AuthenticationService";
+import Header from "../Header";
 
 class Login extends Component {
     constructor(props) {
@@ -31,19 +32,20 @@ class Login extends Component {
                 this.state.password)
             .then(
                 () => {
-                    this.props.history.push('/profile');
+                    this.props.history.push('/');
+                    window.location.reload()
                 },
                 error => {
                     console.log("Login fail: error = { " + error.toString() + " }");
                     this.setState({error: "Can not signin successfully ! Please check username/password again"});
                 }
+
             );
     }
 
     render() {
         return (
             <div>
-                {/*<AppNavbar/>*/}
                 <Container fluid>
                     <Row style={{marginTop: "20px"}}>
                         <Col sm="12" md={{size: 3, offset: 4}}>
@@ -75,7 +77,7 @@ class Login extends Component {
                                     />
                                 </FormGroup>
 
-                                <Button type="submit" variant="primary" size="lg" block>
+                                <Button type="submit" variant="primary" size="lg" block >
                                     Sign In
                                 </Button>
                                 {

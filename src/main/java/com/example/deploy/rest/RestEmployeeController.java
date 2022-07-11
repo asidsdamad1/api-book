@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.UUID;
 
 
-@CrossOrigin
 @RestController
 @RequestMapping("/api/employees")
 public class RestEmployeeController {
@@ -28,13 +27,13 @@ public class RestEmployeeController {
     EmployeeRepository repository;
 
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseEntity<EmployeeDto> save(@RequestBody EmployeeDto dto) {
         EmployeeDto value = service.saveOrUpdate(dto, null);
         return ResponseEntity.ok().body(value);
     }
     /*
-        http://localhost:8089/api/employees/add
+        http://localhost:8089/api/employees/
         {
             "code": "000001",
             "name": "as",
@@ -127,4 +126,6 @@ public class RestEmployeeController {
         http://localhost:8089/api/export/excel
 
      */
+
+
 }

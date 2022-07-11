@@ -27,6 +27,8 @@ public class UserDto {
     private boolean hasPhoto;
     private Set<RoleDto> roles = new HashSet();
 
+    public UserDto() {
+    }
 
     public UserDto(User entity) {
         if (entity != null) {
@@ -71,6 +73,7 @@ public class UserDto {
                 RoleDto dto = (RoleDto)var3.next();
                 entity.getRole().add(dto.toEntity());
             }
+
         }
 
         return entity;

@@ -6,13 +6,12 @@ import com.example.deploy.service.impl.MyUserDetailsService;
 import com.example.deploy.utils.JwtUtil;
 import io.jsonwebtoken.impl.DefaultClaims;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,7 +25,6 @@ import java.util.Map.Entry;
 @RestController
 @RequestMapping("/api/auth")
 public class RestAuthenticationController {
-
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -36,23 +34,24 @@ public class RestAuthenticationController {
 
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+        Authentication authentication;
         try {
-            authenticationManager.authenticate(
+            authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
             );
         } catch (BadCredentialsException e) {
             throw new Exception("Incorrect username or passwowrd", e);
         }
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         final String jwt = jwtTokenUtil.generateToken(userDetails);
-        final int expired = jwtTokenUtil.getJwtExpirationInMs();
-        return ResponseEntity.ok(new AuthenticationResponse(jwt, expired));
+        jwtTokenUtil.setJwtExpirationInMs(9000000);
+        int expired = jwtTokenUtil.getJwtExpirationInMs();
+        return ResponseEntity.ok(new AuthenticationResponse(jwt, expired, userDetails.getUsername(), userDetails.getAuthorities()));
     }
     @RequestMapping(value = "/refreshtoken", method = RequestMethod.GET)
     public ResponseEntity<?> refreshtoken(HttpServletRequest request) throws Exception {
         // From the HttpRequest get the claims
-        DefaultClaims claims = (io.jsonwebtoken.impl.DefaultClaims) request.getAttribute("claims");
+        DefaultClaims claims = (io.jsonwebtoken.impl.DefaultClaims) request.getAttribute("Claims");
 
         Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
         String token = jwtTokenUtil.doGenerateRefreshToken(expectedMap, expectedMap.get("sub").toString());

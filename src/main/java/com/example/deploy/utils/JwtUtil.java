@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.logging.Logger;
 
 @Service
 public class JwtUtil {
@@ -22,13 +21,12 @@ public class JwtUtil {
     public void setRefreshExpirationDateInMs(int refreshExpirationDateInMs) {
         this.refreshExpirationDateInMs = refreshExpirationDateInMs;
     }
-    @Value("${jwt.expirationDateInMs}")
     public void setJwtExpirationInMs(int jwtExpirationInMs) {
         this.jwtExpirationInMs = jwtExpirationInMs;
     }
     @Value("${jwt.expirationDateInMs}")
     public int getJwtExpirationInMs() {
-        return this.jwtExpirationInMs;
+        return jwtExpirationInMs;
     }
 
     public String extractUsername(String token) {
@@ -61,7 +59,7 @@ public class JwtUtil {
 
         List<SimpleGrantedAuthority> roles = null;
 
-        Boolean isAdmin = claims.get("isAd  min", Boolean.class);
+        Boolean isAdmin = claims.get("isAdmin", Boolean.class);
         Boolean isUser = claims.get("isUser", Boolean.class);
 
         if (isAdmin != null && isAdmin) {

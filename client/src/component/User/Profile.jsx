@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Alert, Button, Col, Container, Form, FormGroup, Input, Label, Row} from "reactstrap";
-import avatar from "../../avatar.png";
 import {Link} from "react-router-dom";
 import AuthenticationService from "../../services/AuthenticationService";
 import Header from "../Header";
@@ -23,9 +22,11 @@ class Profile extends Component{
 
         // login
         if (user && user.accessToken) {
-
             let roles = "";
 
+            user.authorities.forEach(authority => {
+                roles = roles + " " + authority.authority
+            });
 
             userInfo = (
                 <div style={{marginTop:"20px"}}>

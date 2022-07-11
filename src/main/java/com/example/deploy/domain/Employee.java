@@ -8,8 +8,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "employee")
 public class Employee extends BaseObject{
-
-
     @Column(name = "code")
     private String code;
     @Column(name = "name")

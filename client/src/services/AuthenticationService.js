@@ -21,13 +21,14 @@ class AuthenticationService {
 
     signOut() {
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
     }
 
-    register = async(firstname, lastname, username, email, password) => {
-        return axios.post("/api/auth/signup", {
+    register = async(username, email, password) => {
+        return axios.post("/public/user/", {
             username,
             email,
-            password
+            password    
         });
     }
 

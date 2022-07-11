@@ -2,24 +2,24 @@ import React, {Component} from 'react';
 import EmployeeService from "../../services/EmployeeService";
 import {toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import {Alert} from "react-bootstrap";
+import {Button, Col, Container, Form, FormGroup, Input, Label, Row} from "reactstrap";
 
 toast.configure({
     autoClose: 2000,
     draggable: false,
     limit: 3
-    //etc you get the idea
 });
 
-//
-// function FormError(props) {
-//     /* nếu isHidden = true, return null ngay từ đầu */
-//     if (props.state.name.length === 0) {
-//         return null;
-//     }
-//
-//     return (<div style={{marginBottom: "10px"}}>{props.errorMessage}</div>)
-// }
-
+const validEmailRegex = RegExp(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i);
+const validPhoneRegex = RegExp(/^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/i);
+const validateForm = (errors) => {
+    let valid = true;
+    Object.values(errors).forEach(
+        (val) => val.length > 0 && (valid = false)
+    );
+    return valid;
+}
 class CreateEmployee extends Component {
     constructor(props) {
         super(props);
@@ -31,28 +31,68 @@ class CreateEmployee extends Component {
             code: '',
             email: '',
             age: '',
-            phone: ''
-
+            phone: '',
+            errors: {
+                name: '',
+                code: '',
+                email: '',
+                age: '',
+                phone: ''
+            }
 
         }
-        this.changeCodeHandler = this.changeCodeHandler.bind(this);
-        this.changeNameHandler = this.changeNameHandler.bind(this);
-        this.changeEmailHandler = this.changeEmailHandler.bind(this);
-        this.changePhoneHandler = this.changePhoneHandler.bind(this);
-        this.changeAgeHandler = this.changeAgeHandler.bind(this);
         this.saveOrUpdate = this.saveOrUpdate.bind(this);
 
     }
+    changeHandler = (event) => {
+        const { name, value } = event.target;
 
+        let errors = this.state.errors;
+
+        switch (name) {
+            case 'name':
+                errors.name =
+                    value.length < 3
+                        ? 'Name must be 3 characters long!'
+                        : '';
+                break;
+            case 'code':
+                errors.code =
+                    value.length < 3
+                        ? 'LastName must be 3 characters long!'
+                        : '';
+                break;
+            case 'email':
+                errors.email =
+                    value.length < 5
+                        ? 'Username must be 5 characters long!'
+                        : '';
+                break;
+            case 'age':
+
+                break;
+            case 'phone':
+                errors.phone =
+                    validPhoneRegex.test(value)
+                        ? ''
+                        : 'Phone number is not valid'
+                break;
+            default:
+                break;
+        }
+
+        this.setState({errors, [name]: value}, ()=> {
+            console.log(errors)
+        })
+    }
 
     componentDidMount() {
-        if (this.state.id === '\\s+') {
+        if (this.state.id === ' ') {
 
         } else {
             EmployeeService.getEmployeeById(this.state.id).then((res) => {
                 let employee = res.data
                 this.setState({
-
                     code: employee.code,
                     name: employee.name,
                     email: employee.email,
@@ -64,9 +104,10 @@ class CreateEmployee extends Component {
 
     }
 
-
     saveOrUpdate = (e) => {
         e.preventDefault();
+        const valid = validateForm(this.state.errors);
+        this.setState({ validForm: valid});
 
         // let {match: {params}} = this.props;
         //
@@ -82,103 +123,188 @@ class CreateEmployee extends Component {
         }
         console.log('employee => ' + JSON.stringify(employee));
 
-        EmployeeService.checkCode(this.state.id, employee.code).then((res) => {
-            if (res.data) {
-                toast.error('Mã đã được sử dụng!')
-            } else {
-                if (this.state.id === '') {
-
-                    EmployeeService.saveEmployee(employee).then((res) => {
-                        this.props.history.push("/employees")
-                        toast.success('Thêm thành công!')
-                    })
+        if(valid) {
+            EmployeeService.checkCode(this.state.id, employee.code).then((res) => {
+                if (res.data) {
+                    toast.error('Mã đã được sử dụng!')
                 } else {
-                    EmployeeService.updateEmployee(employee, this.state.id).then((res) => {
-                        this.props.history.push("/employees")
-                        toast.success('Cập nhật thành công!')
-                    })
+                    if (this.state.id.trim() === '') {
+
+                        EmployeeService.saveEmployee(employee, this.state.id).then((res) => {
+                            this.props.history.push("/employees")
+                            toast.success('Thêm thành công!')
+                        })
+                    } else {
+                        EmployeeService.updateEmployee(employee, this.state.id).then((res) => {
+                            this.props.history.push("/employees")
+                            toast.success('Cập nhật thành công!')
+                        })
+                    }
                 }
-            }
 
-        })
+            })
+        }
 
 
     }
-    changeNameHandler = (event) => {
-        if (event.target === null) alert("a")
-        this.setState({name: event.target.value});
-    }
-    changeCodeHandler = (event) => {
-        this.setState({code: event.target.value});
-    }
-    changeEmailHandler = (event) => {
-        this.setState({email: event.target.value});
-    }
-    changePhoneHandler = (event) => {
-        this.setState({phone: event.target.value});
-    }
-    changeAgeHandler = (event) => {
-        this.setState({age: event.target.value});
-    }
+
 
     cancel() {
         this.props.history.push('/employees');
     }
 
     render() {
+        const style = {
+            color: "red",
+            fontSize: 12
+        }
+        const title = <h2>Register User</h2>;
+        const errors = this.state.errors;
+
+        let alert = "";
+
+        if(this.state.message){
+            if(this.state.successful){
+                alert = (
+                    <Alert variant="success">
+                        {this.state.message}
+                    </Alert>
+                );
+            }else{
+                alert = (
+                    <Alert variant="danger">
+                        {this.state.message}
+                    </Alert>
+                );
+            }
+        }
         return (
             <div>
-                <div className="container">
-                    <div className="row">
-                        <div className="card col-md-6 offset-md-3 offset-md-3">
-                            <h3 className="text-center">Add Employee</h3>
-                            <div className="card-body">
-                                <form action="">
-                                    <div className="form-group">
-                                        <label>Name <span className={"text-danger"}>*</span> </label>
-                                        <input placeholder={"Name"} name={"name"} className={"form-control"}
-                                               value={this.state.name} onChange={this.changeNameHandler}
-                                               required={true}/>
+                <Container fluid>
+                    <Row>
+                        <Col sm="12" md={{ size: 4, offset: 4 }}>
+                            {title}
+                            <Form onSubmit={this.signUp}>
+                                <FormGroup controlId="formName">
+                                    <Label for="name">Name</Label>
+                                    <Input
+                                        type="text"
+                                        placeholder="Enter Name"
+                                        name="name" id="name"
+                                        value={this.state.name}
+                                        autoComplete="name"
+                                        onChange={this.changeHandler}
 
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Code <span className={"text-danger"}>*</span> </label>
-                                        <input type={"email"} placeholder={"Code"} name={"code"}
-                                               className={"form-control"}
-                                               value={this.state.code} onChange={this.changeCodeHandler}/>
-
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Email <span className={"text-danger"}>*</span> </label>
-                                        <input type={"email"} placeholder={"Email"} name={"email"}
-                                               className={"form-control"}
-                                               value={this.state.email} onChange={this.changeEmailHandler}/>
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Age <span className={"text-danger"}>*</span> </label>
-                                        <input placeholder={"Age"} name={"age"} className={"form-control"}
-                                               value={this.state.age} onChange={this.changeAgeHandler}/>
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Phone <span className={"text-danger"}>*</span> </label>
-                                        <input placeholder={"Phone"} name={"phone"} className={"form-control"}
-                                               value={this.state.phone} onChange={this.changePhoneHandler}/>
+                                    />
+                                    <div >
+                                        {
+                                            errors.name && (
+                                                <span style={style}>
+                                                    * {errors.name}
+                                                </span>
+                                            )
+                                        }
                                     </div>
 
-                                    <button className={"btn btn-success"} onClick={this.saveOrUpdate}
-                                            style={{marginLeft: "10px"}}>Save
-                                    </button>
-                                    <button className="btn btn-danger" onClick={this.cancel.bind(this)}
-                                            style={{marginLeft: "10px"}}>Cancel
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                </FormGroup>
 
-            </div>
-        );
+                                <FormGroup controlId="formCode">
+                                    <Label for="code">Code</Label>
+                                    <Input
+                                        type="text"
+                                        placeholder="Enter Code"
+                                        name="code" id="code"
+                                        value={this.state.code}
+                                        autoComplete="code"
+                                        onChange={this.changeHandler}
+                                    />
+
+                                </FormGroup>
+
+                                <FormGroup controlId="formEmail">
+                                    <Label for="email">Email</Label>
+                                    <Input
+                                        type="text"
+                                        placeholder="Enter Email"
+                                        name="email" id="email"
+                                        value={this.state.email}
+                                        autoComplete="email"
+                                        onChange={this.changeHandler}
+                                        style={{zIndex:1}}
+                                    />
+                                    <div >
+                                        {
+                                            errors.email && (
+                                                <span style={style}>
+                                                    * {errors.email}
+                                                </span>
+                                            )
+                                        }
+                                    </div>
+                                </FormGroup>
+
+                                <FormGroup controlId="formAge">
+                                    <Label for="age">Age</Label>
+                                    <Input required
+                                           type="number"
+                                           placeholder="Enter Age"
+                                           name="age" id="age"
+                                           value={this.state.age}
+                                           autoComplete="age"
+                                           onChange={this.changeHandler}
+
+                                    />
+                                    <div >
+                                        {
+                                            errors.age && (
+                                                <span style={style}>
+                                                    * {errors.age}
+                                                </span>
+                                            )
+                                        }
+                                    </div>
+                                </FormGroup>
+
+                                <FormGroup controlId="formPhone">
+                                    <Label for="phone">Phone</Label>
+                                    <Input required
+                                           type="phone"
+                                           placeholder="Enter Phone"
+                                           name="phone" id="phone"
+                                           value={this.state.phone}
+                                           autoComplete="phone"
+                                           onChange={this.changeHandler}
+                                    />
+                                    <div >
+                                        {
+                                            errors.phone && (
+                                                <span style={style}>
+                                                    * {errors.phone}
+                                                </span>
+                                            )
+                                        }
+                                    </div>
+                                </FormGroup>
+
+                                <Button className={"btn btn-success"} onClick={this.saveOrUpdate}
+                                       >Save
+                                </Button>
+                                <Button className="btn btn-danger" onClick={this.cancel.bind(this)}
+                                        style={{marginLeft: "10px"}}>Cancel
+                                </Button>
+                                {
+                                    !this.state.validForm && (
+                                        <Alert key="validForm" variant="danger">
+                                            Please check the inputs again!
+                                        </Alert>
+                                    )
+                                }
+                                {alert}
+                            </Form>
+                        </Col>
+                    </Row>
+                </Container>
+            </div>);
     }
 }
 
